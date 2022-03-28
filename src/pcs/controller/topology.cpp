@@ -103,7 +103,7 @@ namespace pcs::topology {
 		}
 	}
 
-	LabelledTransitionSystem Combine(const std::span<LabelledTransitionSystem>& ltss, Recipe recipe) {
+	bool Combine(const std::span<LabelledTransitionSystem>& ltss, Recipe recipe) {
 		LabelledTransitionSystem combined_lts;
 		LabelledTransitionSystem realisability_lts;
 		std::vector<std::string> states_vec;
@@ -130,8 +130,8 @@ namespace pcs::topology {
 				}
 			}
 		}
-
-		return realisability_lts;
+		return isRealisible;
+		//return realisability_lts;
 	}
 
 	

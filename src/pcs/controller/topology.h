@@ -18,7 +18,7 @@ namespace pcs::topology {
 		std::unordered_map<std::string, bool>& visited, LabelledTransitionSystem& combined_lts);
 	std::string StateVectorToString(const std::span<std::string>& vec);
 
-	LabelledTransitionSystem Combine(const std::span<LabelledTransitionSystem>& ltss, Recipe recipe);
+	bool Combine(const std::span<LabelledTransitionSystem>& ltss, Recipe recipe);
 	void CombineRecursive(const std::span<LabelledTransitionSystem>& ltss, std::vector<std::string>& states_vec,
 		std::unordered_map<std::string, bool>& visited, LabelledTransitionSystem& combined_lts, Recipe recipe, LabelledTransitionSystem& realisability_lts);
 

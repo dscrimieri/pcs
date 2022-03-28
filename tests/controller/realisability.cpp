@@ -19,11 +19,13 @@ TEST(realisability, realisability) {
 
 	recipe.mylts_.SetInitialState("A", true);
 	recipe.mylts_.AddTransition("A", "a1", "B");
-	recipe.mylts_.AddTransition("B", "a2", "C");
+	recipe.mylts_.AddTransition("B", "a5", "C");
 	recipe.mylts_.AddTransition("C", "a2", "D");
-	recipe.mylts_.AddTransition("C", "a4", "E");
+	recipe.mylts_.AddTransition("C", "a2", "E");
 
 
-	got = pcs::topology::Combine(ltss, recipe);
+	//got = pcs::topology::Combine(ltss, recipe);
+	bool result = pcs::topology::Combine(ltss, recipe);
+	std::cout << std::endl << result << std::endl;
 	//ASSERT_EQ(expected, got);
 }
