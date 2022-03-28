@@ -84,4 +84,56 @@ namespace pcs::topology {
 
 	}
 
+	void CombineRecursive(const std::span<LabelledTransitionSystem>& ltss, std::vector<std::string>& states_vec, std::unordered_map<std::string, bool>& visited, LabelledTransitionSystem& combined_lts, Recipe recipe, LabelledTransitionSystem& realisabile_lts) {
+		std::string states_str = StateVectorToString(states_vec);
+		if (visited[states_str] == true) {
+			return;
+		}
+		visited[states_str] = true;
+		for (size_t i = 0; i < ltss.size(); i++) {
+			for (const auto& t : ltss[i].states_.at(states_vec[i]).transitions_) {
+				std::vector<std::string> next_states = states_vec;
+				next_states[i] = t.second;
+				combined_lts.AddTransition(states_str, t.first, StateVectorToString(next_states));
+				if (pcs::controller::checkRealisability(t, recipe)) {
+					realisabile_lts.AddTransition(states_str, t.first, StateVectorToString(next_states));
+				}
+				CombineRecursive(ltss, next_states, visited, combined_lts, recipe, realisabile_lts);
+			}
+		}
+	}
+
+	LabelledTransitionSystem Combine(const std::span<LabelledTransitionSystem>& ltss, Recipe recipe) {
+		LabelledTransitionSystem combined_lts;
+		LabelledTransitionSystem realisability_lts;
+		std::vector<std::string> states_vec;
+		for (const auto& lts : ltss) {
+			// Populate with initial states
+			states_vec.emplace_back(lts.GetInitialState());
+		}
+		std::string initial_key = StateVectorToString(states_vec);
+		combined_lts.SetInitialState(initial_key, true);
+		std::unordered_map<std::string, bool> visited;
+		CombineRecursive(ltss, states_vec, visited, combined_lts, recipe, realisability_lts);
+
+		bool isRealisible = true;
+		for (auto ele : recipe.mylts_.states_) {	
+			for (auto recipetransition : ele.second.transitions_) {
+				bool isTransitionRealisible = false;
+				for (auto ele_reali : realisability_lts.states_) {
+					if (pcs::controller::exist(recipetransition.first, ele_reali.second.transitions_) && (ele_reali.second.transitions_.size() > 0)){
+						isTransitionRealisible = true;
+					}
+				}
+				if (!isTransitionRealisible) {
+					isRealisible = false;
+				}
+			}
+		}
+
+		return realisability_lts;
+	}
+
+	
+
 }

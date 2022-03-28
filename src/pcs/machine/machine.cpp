@@ -4,11 +4,11 @@
 
 namespace pcs {
 
-	Machine::Machine(std::vector<LabelledTransitionSystem>&& resources) {
+	Machine::Machine(std::vector<pcs::lts::LabelledTransitionSystem<std::string>>&& resources) {
 		resources_ = std::move(resources);
 	}
 
-	Machine::Machine(const std::span<LabelledTransitionSystem>& resources)  {
+	Machine::Machine(const std::span<pcs::lts::LabelledTransitionSystem<std::string>>& resources)  {
 		resources_.assign(resources.begin(), resources.end());
 	}
 

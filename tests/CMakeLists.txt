@@ -28,6 +28,7 @@ endmacro()
 # Test Suite
 package_add_test("lts" "lts/lts.cpp")
 package_add_test("lts-parsers" "lts/parsers.cpp")
+package_add_test("realisability" "controller/realisability.cpp")
 
 package_add_test("product-lts-parser" "product/parser.cpp")
 

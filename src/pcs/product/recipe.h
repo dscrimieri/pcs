@@ -12,7 +12,8 @@ namespace pcs {
 
 	class Recipe {
 	public:
-		LabelledTransitionSystem<CompositeOperation> lts_;
+		pcs::lts::LabelledTransitionSystem<CompositeOperation> lts_;
+		pcs::lts::LabelledTransitionSystem<std::string> mylts_;
 	public:
 		Recipe();
 		Recipe(const std::filesystem::path& filepath);

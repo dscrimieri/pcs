@@ -8,30 +8,24 @@ namespace pcs::controller {
 
     }
 
-    bool Realisability::checkRealisability(LabelledTransitionSystem<std::string> lts, Recipe recipe)
+    bool checkRealisability(std::pair<std::string, std::string> transition, Recipe recipe)
     {
-        // add loop for the size of recipe states if the states of recipe are not in sequential order
-        if (lts.GetInitialState() == recipe.lts_.GetInitialState()) {
-            std::string ltsState = lts.GetInitialState();    
-            for (auto ele : recipe.lts_.states_) {
-                if (ele.first == ltsState) {
-                    for (auto transitionStates : ele.second.transitions_) {
-                        for (auto ltsTransitionStates : lts.states_[ltsState].transitions_) {
-                            if (transitionStates.second == ltsTransitionStates.second) {
-                                ltsState = ltsTransitionStates.second;
-                            }
-                            else {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                else {
-                    return false;
+        for (auto ele : recipe.mylts_.states_) {
+            for (auto transitionStates : ele.second.transitions_) {
+                if (transitionStates.first == transition.first) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
+    bool exist(std::string element, std::vector<std::pair<std::string, std::string>> lts) {
+        for (auto ele : lts) {
+            if (element == ele.first) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
