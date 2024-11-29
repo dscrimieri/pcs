@@ -14,6 +14,7 @@
 
 #include "pcs/topology/topology.h"
 #include "lts/parsers/parsers.h"
+#include "../memory_manager.h"
 
 const static std::string machine_name_small = "small_test_model2";
 const static std::string machine_name_medium = "medium_test_model2";
@@ -339,11 +340,6 @@ static void OutputStats(const pcs::Environment& machine)
 		+ ", Number of Transitions = " + std::to_string(machine.topology()->lts().NumOfTransitions()) << std::endl;
 }
 
-static void OutputStats(size_t cost, const std::unordered_set<size_t>& resources, const pcs::Environment& machine)
-{
-	OutputStats(cost, std::list(resources.begin(), resources.end()), machine);
-}
-
 static void OutputStats(size_t cost, const std::list<size_t>& resources, const pcs::Environment& machine)
 {
 	std::ofstream stats("stats.txt", std::ios::out | std::ios::app);
@@ -357,6 +353,11 @@ static void OutputStats(size_t cost, const std::list<size_t>& resources, const p
 	stats << "} ";
 
 	OutputStats(machine);
+}
+
+static void OutputStats(size_t cost, const std::unordered_set<size_t>& resources, const pcs::Environment& machine)
+{
+	OutputStats(cost, std::list(resources.begin(), resources.end()), machine);
 }
 
 static void CreateController(benchmark::State& state, int n, int transport) {
@@ -662,3 +663,12 @@ BENCHMARK(CreateBestControllerMinCostEstimate1)->DenseRange(2, num_resources, 2)
 //BENCHMARK(CreateBestControllerMinCostEstimate3)->DenseRange(2, num_resources, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinRes3)->DenseRange(2, num_resources, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinCost3)->DenseRange(2, num_resources, 2)->Unit(benchmark::kMillisecond);
+
+//BENCHMARK_MAIN();
+int main(int argc, char** argv)
+{
+	::benchmark::RegisterMemoryManager(mm.get());
+	::benchmark::Initialize(&argc, argv);
+	::benchmark::RunSpecifiedBenchmarks();
+	::benchmark::RegisterMemoryManager(nullptr);
+}
