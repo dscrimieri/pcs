@@ -76,7 +76,9 @@ namespace pcs {
 			std::unordered_set<size_t> used_resources; // If minimizing the number of resources, this is used.
 			std::list<size_t> list_used_resources;
 		public:
-			Candidate() = default;
+			Candidate()
+				: path_cost(0), cost(0), complete_ops(0), complete_composite_ops(0) {
+			}
 
 			Candidate(const Stage& descendant)
 				: path_cost(0), cost(0), complete_ops(0), complete_composite_ops(0) {
