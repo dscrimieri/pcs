@@ -12,7 +12,7 @@
 #include "lts/parsers/parsers.h"
 #include "../memory_manager.h"
 
-static std::string machine_name = "small_test_model";
+static std::string machine_name = "extended_small";
 static std::string machine_dir = "../../data/" + machine_name;
 static std::string resource_file_prefix = machine_dir + "/Resource";
 static std::string recipe_dir = machine_dir + "/experiments/";
@@ -356,7 +356,7 @@ static void IncrementalTopologyWithController(benchmark::State& state, int n, in
 
 static void CompleteTopology1(benchmark::State& state) {
 	model_size = ModelSize::small;
-	machine_name = "small_test_model";
+	machine_name = "extended_small";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	
@@ -365,7 +365,7 @@ static void CompleteTopology1(benchmark::State& state) {
 
 static void ControllerUsingCompleteTopology1(benchmark::State& state) {
 	model_size = ModelSize::small;
-	machine_name = "small_test_model";
+	machine_name = "extended_small";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -375,7 +375,7 @@ static void ControllerUsingCompleteTopology1(benchmark::State& state) {
 
 static void CompleteTopologyWithController1(benchmark::State& state) {
 	model_size = ModelSize::small;
-	machine_name = "small_test_model";
+	machine_name = "extended_small";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -385,7 +385,7 @@ static void CompleteTopologyWithController1(benchmark::State& state) {
 
 static void IncrementalTopologyWithController1(benchmark::State& state) {
 	model_size = ModelSize::small;
-	machine_name = "small_test_model";
+	machine_name = "extended_small";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -395,7 +395,7 @@ static void IncrementalTopologyWithController1(benchmark::State& state) {
 
 static void CompleteTopology2(benchmark::State& state) {
 	model_size = ModelSize::medium;
-	machine_name = "medium_test_model";
+	machine_name = "extended_medium";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 
@@ -404,7 +404,7 @@ static void CompleteTopology2(benchmark::State& state) {
 
 static void ControllerUsingCompleteTopology2(benchmark::State& state) {
 	model_size = ModelSize::medium;
-	machine_name = "medium_test_model";
+	machine_name = "extended_medium";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -414,7 +414,7 @@ static void ControllerUsingCompleteTopology2(benchmark::State& state) {
 
 static void CompleteTopologyWithController2(benchmark::State& state) {
 	model_size = ModelSize::medium;
-	machine_name = "medium_test_model";
+	machine_name = "extended_medium";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -424,7 +424,7 @@ static void CompleteTopologyWithController2(benchmark::State& state) {
 
 static void IncrementalTopologyWithController2(benchmark::State& state) {
 	model_size = ModelSize::medium;
-	machine_name = "medium_test_model";
+	machine_name = "extended_medium";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -434,7 +434,7 @@ static void IncrementalTopologyWithController2(benchmark::State& state) {
 
 static void CompleteTopology3(benchmark::State& state) {
 	model_size = ModelSize::big;
-	machine_name = "big_test_model";
+	machine_name = "extended_big";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 
@@ -443,7 +443,7 @@ static void CompleteTopology3(benchmark::State& state) {
 
 static void ControllerUsingCompleteTopology3(benchmark::State& state) {
 	model_size = ModelSize::big;
-	machine_name = "big_test_model";
+	machine_name = "extended_big";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -453,7 +453,7 @@ static void ControllerUsingCompleteTopology3(benchmark::State& state) {
 
 static void CompleteTopologyWithController3(benchmark::State& state) {
 	model_size = ModelSize::big;
-	machine_name = "big_test_model";
+	machine_name = "extended_big";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
@@ -463,7 +463,7 @@ static void CompleteTopologyWithController3(benchmark::State& state) {
 
 static void IncrementalTopologyWithController3(benchmark::State& state) {
 	model_size = ModelSize::big;
-	machine_name = "big_test_model";
+	machine_name = "extended_big";
 	machine_dir = "../../data/" + machine_name;
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
