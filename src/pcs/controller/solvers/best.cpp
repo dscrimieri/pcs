@@ -103,7 +103,6 @@ namespace pcs {
 				bool allocate = true;
 				if (!input.empty()) {
 					allocate = stage.parts.Allocate(transition.label(), input);
-					allocate = true;
 				}
 				bool unify = Unify(transition.label().second.parameters(), parameters, op);
 				bool nopize = NopizeObservable(machine_->resources(), *stage.topology_state, transition.label().first, op.name());

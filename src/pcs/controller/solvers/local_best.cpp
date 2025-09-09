@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <queue>
 #include <cassert>
+#include <set>
 
 #include <spdlog/fmt/bundled/color.h>
 #include <spdlog/fmt/ranges.h>
@@ -86,10 +87,11 @@ namespace pcs {
 		used_resources_ = std::unordered_set<size_t>();
 		list_used_resources_ = std::list<size_t>();
 		cost_ = 0;
+		std::set<LocalCandidate> visited_candidates;
 
 		// The first transition of the recipe does not have a guard associated with it
 		bool generated = DFS(controller, first_transition.to(), &topology_->initial_state(), plan_parts, basic_plan, plan_transitions, first_transition.label(), 0,
-			used_resources_, list_used_resources_, cost_, 0);
+			used_resources_, list_used_resources_, cost_, visited_candidates, 0);
 
 		PCS_INFO(fmt::format(fmt::fg(fmt::color::light_green), "Controller generation completed: realisability = {}", generated));
 
@@ -183,7 +185,7 @@ namespace pcs {
 	 */
 	bool LocalBestController::DFS(ControllerType& controller, const std::string& next_recipe_state, const std::vector<std::string>* topology_state,
 			Parts plan_parts, std::vector<PlanTransition> basic_plan, std::vector<PlanTransition> plan_transitions,	const CompositeOperation& co, size_t seq_id, 
-			std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, size_t recursion_level) {
+			std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, std::set<LocalCandidate> visited_candidates, size_t recursion_level) {
 
 		// 1. Get the current sequential operation to process
 		const TaskExpression& task = co.CurrentTask(seq_id);
@@ -224,6 +226,10 @@ namespace pcs {
 				next_transitions.emplace_back(next_recipe_state, topology_state, label_vec, &state_vec);
 				
 				LocalCandidate cand(state_vec, next_parts, next_transitions, used_resources, list_used_resources, cost);
+				if (visited_candidates.contains(cand)) {
+					continue;
+				}
+				
 				UpdateCost(cand, *std::get<2>(v), opt_);
 				pq.push(cand);
 			}
@@ -231,8 +237,11 @@ namespace pcs {
 			while (!pq.empty()) {
 				LocalCandidate cand = pq.top();
 				pq.pop();				
+
+				std::set<LocalCandidate> next_visited_candidates = visited_candidates;
+				next_visited_candidates.insert(cand);
 				found = DFS(controller, next_recipe_state, &cand.state_vec_, std::move(cand.next_parts_), basic_plan, std::move(cand.next_transitions_), co, seq_id,
-					cand.used_resources_, cand.list_used_resources_, cand.cost_, ++recursion_level);
+					cand.used_resources_, cand.list_used_resources_, cand.cost_, next_visited_candidates, ++recursion_level);
 				if (found) {
 					used_resources = cand.used_resources_;
 					list_used_resources = cand.list_used_resources_;
@@ -249,7 +258,7 @@ namespace pcs {
 				PCS_INFO(fmt::format(fmt::fg(fmt::color::lavender), "[DFS] Processed Operation = \"{}\" with input parts [{}] and output parts [{}]",
 					op.name(), fmt::join(input, ","), fmt::join(output, ",")));
 				return DFS(controller, next_recipe_state, topology_state, plan_parts, basic_plan, plan_transitions, co, seq_id,
-					used_resources, list_used_resources, cost, ++recursion_level);
+					used_resources, list_used_resources, cost, visited_candidates, ++recursion_level);
 			} else {
 				ControllerType rec_controller = controller;
 				ApplyAllTransitions(plan_transitions, rec_controller);
@@ -267,7 +276,7 @@ namespace pcs {
 					PCS_INFO(fmt::format(fmt::fg(fmt::color::gold) | fmt::emphasis::bold, "Processing recipe transition to: {}",
 						rec_transition.to()));
 					bool realise = DFS(rec_controller, rec_transition.to(), topology_state, plan_parts, rec_basic_plan, plan_transitions, rec_transition.label(), 0,
-						rec_used_resources, rec_list_used_resources, rec_cost, ++recursion_level);
+						rec_used_resources, rec_list_used_resources, rec_cost, visited_candidates, ++recursion_level);
 					if (realise == false) {
 						return false;
 					}

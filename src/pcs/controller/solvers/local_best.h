@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <span>
+#include <set>
 
 #include <boost/container_hash/hash.hpp>
 
@@ -13,6 +14,7 @@
 #include "pcs/operation/parameterized_op.h"
 #include "pcs/controller/parts.h"
 #include "pcs/controller/solvers/best.h"
+#include "pcs/common/strings.h"
 
 namespace pcs {
 
@@ -50,6 +52,7 @@ namespace pcs {
 			size_t cost_; // number of resources used or their cost
 			std::unordered_set<size_t> used_resources_; // If minimizing the number of resources, this is used.
 			std::list<size_t> list_used_resources_;
+			static const bool compare_parts_ = false;
 		public:
 			LocalCandidate()
 				: cost_(0)
@@ -59,6 +62,27 @@ namespace pcs {
 				const std::unordered_set<size_t>& used_resources, const std::list<size_t>& list_used_resources, size_t cost)
 				: state_vec_(state_vec), next_parts_(next_parts), next_transitions_(next_transitions), used_resources_(used_resources), list_used_resources_(list_used_resources), cost_(cost)
 			{}
+
+			bool operator < (const LocalCandidate& a) const {
+				if (state_vec_ < a.state_vec_) {
+					return true;
+				}
+				else {
+					if (compare_parts_) {
+						if (state_vec_ == a.state_vec_) {
+							std::stringstream ss;
+							std::stringstream ssa;
+
+							ss << next_parts_;
+							ssa << a.next_parts_;
+							if (ss.str() < ssa.str()) {
+								return true;
+							}
+						}
+					}
+					return false;						
+				}					
+			}
 		};
 
 		// Min order comparator for LocalCandidates
@@ -82,7 +106,7 @@ namespace pcs {
 			std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost);
 		bool DFS(ControllerType& controller, const std::string& recipe_state, const std::vector<std::string>* topology_state,
 			Parts plan_parts, std::vector<PlanTransition> basic_plan, std::vector<PlanTransition> plan_transitions, const CompositeOperation& co, size_t seq_id,
-			std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, size_t recursion_level);
+			std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, std::set<LocalCandidate> visited_candidates, size_t recursion_level);
 		void SetCosts(std::optional<std::filesystem::path> path);
 		void UpdateCost(LocalCandidate& cand, const TopologyTransition& transition, MinimizeOpt opt);
 		void UpdateCost(std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, const TopologyTransition& transition, MinimizeOpt opt);
