@@ -27,29 +27,32 @@ static std::string resource_file_prefix = machine_dir + "/Resource";
 static std::string recipe_dir = machine_dir + "/experiments/";
 static std::string costs_file = machine_dir + "/costs.txt";
 
+static const int max_resource_cost_best_controller = 10;
+static const int max_resource_cost_local_best_controller = 100;
+
 static const int nres_controller1 = 0;
 static const int nres_best_controller_min_res1 = 0;
 static const int nres_best_controller_min_trans1 = 0;
-static const int nres_best_controller_min_cost1 = 0;
-static const int nres_best_controller_min_cost_estimate1 = 0;
+static const int nres_best_controller_min_cost1 = 22;
+static const int nres_best_controller_min_cost_estimate1 = 22;
 static const int nres_local_best_controller_min_res1 = 0;
-static const int nres_local_best_controller_min_cost1 = 0;
+static const int nres_local_best_controller_min_cost1 = 212;
 
 static const int nres_controller2 = 0;
 static const int nres_best_controller_min_res2 = 0;
 static const int nres_best_controller_min_trans2 = 0;
-static const int nres_best_controller_min_cost2 = 18;
-static const int nres_best_controller_min_cost_estimate2 = 20;
+static const int nres_best_controller_min_cost2 = 20;
+static const int nres_best_controller_min_cost_estimate2 = 22;
 static const int nres_local_best_controller_min_res2 = 0;
-static const int nres_local_best_controller_min_cost2 = 182;
+static const int nres_local_best_controller_min_cost2 = 62;
 
 static const int nres_controller3 = 0;
 static const int nres_best_controller_min_res3 = 0;
 static const int nres_best_controller_min_trans3 = 0;
-static const int nres_best_controller_min_cost3 = 18;
-static const int nres_best_controller_min_cost_estimate3 = 20;
+static const int nres_best_controller_min_cost3 = 14;
+static const int nres_best_controller_min_cost_estimate3 = 14;
 static const int nres_local_best_controller_min_res3 = 0;
-static const int nres_local_best_controller_min_cost3 = 142;
+static const int nres_local_best_controller_min_cost3 = 62;
 
 enum ModelSize {
 	small,
@@ -189,14 +192,16 @@ static void CreateTransportResource(int transport, int nres) {
 		stream << "s0. nop. s0.\n";
 		stream << "s0a. nop. s0a.\n";
 		stream << "s0b. nop. s0b.\n";
+		stream << "s0c. nop. s0c.\n";
 
 		stream << "s0. in:1. s1.\n";
 		stream << "s1. out:2. s0a.\n";
-		stream << "s1. out:" + std::to_string(nres - 1 + 2) + ". s0b.\n";
+		stream << "s1. out:" + std::to_string(nres + 1) + ". s0b.\n";
+		stream << "s1. out:" + std::to_string(nres + nres - 1) + ". s0c.\n";
 
-		for (int i = 1; i < nres; i++) {
-			stream << "s0a. in:" + std::to_string(i) + ". s" + std::to_string(i) + ".\n";
+		for (int i = 1; i < nres; i++) {			
 			if (i > 1) {
+				stream << "s0a. in:" + std::to_string(i) + ". s" + std::to_string(i) + ".\n";
 				stream << "s" + std::to_string(i) + ". out:" + std::to_string(i + 1) + ". s0a.\n";
 				if (i > 2) {
 					stream << "s" + std::to_string(i) + ". out:" + std::to_string(i - 1) + ". s0a.\n";
@@ -208,6 +213,14 @@ static void CreateTransportResource(int transport, int nres) {
 				stream << "s" + std::to_string(nres - 1 + i) + ". out:" + std::to_string(nres - 1 + i + 1) + ". s0b.\n";
 				if (i > 2) {
 					stream << "s" + std::to_string(nres - 1 + i) + ". out:" + std::to_string(nres - 1 + i - 1) + ". s0b.\n";
+				}
+			}
+
+			if (i > 1) {
+				stream << "s0c. in:" + std::to_string(nres - 1 + nres - 1 + i - 1) + ". s" + std::to_string(nres - 1 + nres - 1 + i - 1) + ".\n";
+				stream << "s" + std::to_string(nres - 1 + nres - 1 + i - 1) + ". out:" + std::to_string(nres - 1 + nres - 1 + i) + ". s0c.\n";
+				if (i > 2) {
+					stream << "s" + std::to_string(nres - 1 + nres - 1 + i - 1) + ". out:" + std::to_string(nres - 1 + nres - 1 + i - 2) + ". s0c.\n";
 				}
 			}
 		}
@@ -230,12 +243,16 @@ static void LoadResources(pcs::Environment& machine, int nres, int transport) {
 			CreateAlternativeResource(nres - 1 + i, i);
 		}
 
+		for (int i = 2; i < nres; i++) {
+			CreateAlternativeResource(nres - 1 + nres - 1 + i - 1, i);
+		}
+
 		CreateTransportResource(transport, nres);
 		resources_created = true;
 	}
 
 	try {
-		for (int i = 1; i < nres * 2 - 1; i++) {
+		for (int i = 1; i <= (nres - 2) * 3 + 2; i++) {
 			machine.AddResource(resource_file_prefix + std::to_string(i) + ".txt", false);
 		}
 	}
@@ -390,15 +407,23 @@ static void LoadRecipe(pcs::Recipe& recipe, int nres) {
 	recipe.set_recipe(recipe_dir + "recipe" + std::to_string(nres - 1) + "R.json");
 }
 
-static void CreateCostsFile(int nres) {	
+static void CreateCostsFile(int nres, int max_cost) {	
 	std::ofstream stream;
 	stream.exceptions(std::ofstream::badbit);
 
 	try {
 		stream.open(costs_file, std::ios::out | std::ios::trunc);
 		
-		for (int i = nres * 2 - 2; i >= 1; i--) {
-			int cost = ceil((float)i / (nres * 2 - 2) * 10);
+		for (int i = (nres - 2) * 3 + 2; i >= 1; i--) {
+			int cost;
+
+			if (i == (nres - 2) * 3 + 2 - nres) {
+				cost = 1;
+			}
+			else {
+				cost = ceil((float)i / ((nres - 2) * 3 + 2) * max_cost);
+			}
+
 			stream << std::to_string(cost) + "\n";
 		}
 	}
@@ -525,7 +550,7 @@ static void CreateBestControllerMinCost(benchmark::State& state, int nres, int t
 	LoadResources(machine, nres, transport);
 	pcs::Recipe recipe;
 	LoadRecipe(recipe, nres);
-	CreateCostsFile(nres);
+	CreateCostsFile(nres, max_resource_cost_best_controller);
 
 	size_t cost = 0;
 	std::list<size_t> resources;
@@ -548,7 +573,7 @@ static void CreateBestControllerMinCostEstimate(benchmark::State& state, int nre
 	LoadResources(machine, nres, transport);
 	pcs::Recipe recipe;
 	LoadRecipe(recipe, nres);
-	CreateCostsFile(nres);
+	CreateCostsFile(nres, max_resource_cost_best_controller);
 
 	size_t cost = 0;
 	std::list<size_t> resources;
@@ -593,7 +618,7 @@ static void CreateLocalBestControllerMinCost(benchmark::State& state, int nres, 
 	LoadResources(machine, nres, transport);
 	pcs::Recipe recipe;
 	LoadRecipe(recipe, nres);
-	CreateCostsFile(nres);
+	CreateCostsFile(nres, max_resource_cost_local_best_controller);
 
 	size_t cost = 0;
 	std::list<size_t> resources;
@@ -611,7 +636,7 @@ static void CreateLocalBestControllerMinCost(benchmark::State& state, int nres, 
 	WriteLog(cost, resources, machine, "CreateLocalBestControllerMinCost", nres);
 }
 
-static void CreateFilenames(ModelSize size, int nres) {
+static void CreateFilenames(ModelSize size, int nres, int max_cost = 10) {
 	model_size = size;
 
 	switch (model_size) {
@@ -628,7 +653,7 @@ static void CreateFilenames(ModelSize size, int nres) {
 		assert(false);
 	}
 
-	machine_dir = "../../data/" + machine_name + " " + std::to_string(nres);
+	machine_dir = "../../data/" + machine_name + " " + std::to_string(max_cost) + "c " + std::to_string(nres) + "r";
 	resource_file_prefix = machine_dir + "/Resource";
 	recipe_dir = machine_dir + "/experiments/";
 	costs_file = machine_dir + "/costs.txt";
@@ -654,13 +679,13 @@ static void CreateBestControllerMinTrans1(benchmark::State& state) {
 
 static void CreateBestControllerMinCost1(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::small, nres);
+	CreateFilenames(ModelSize::small, nres, max_resource_cost_best_controller);
 	CreateBestControllerMinCost(state, nres, nres);
 }
 
 static void CreateBestControllerMinCostEstimate1(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::small, nres);
+	CreateFilenames(ModelSize::small, nres, max_resource_cost_best_controller);
 	CreateBestControllerMinCostEstimate(state, nres, nres);
 }
 
@@ -672,7 +697,7 @@ static void CreateLocalBestControllerMinRes1(benchmark::State& state) {
 
 static void CreateLocalBestControllerMinCost1(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::small, nres);
+	CreateFilenames(ModelSize::small, nres, max_resource_cost_local_best_controller);
 	CreateLocalBestControllerMinCost(state, nres, nres);
 }
 
@@ -696,13 +721,13 @@ static void CreateBestControllerMinTrans2(benchmark::State& state) {
 
 static void CreateBestControllerMinCost2(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::medium, nres);
+	CreateFilenames(ModelSize::medium, nres, max_resource_cost_best_controller);
 	CreateBestControllerMinCost(state, nres, nres);
 }
 
 static void CreateBestControllerMinCostEstimate2(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::medium, nres);
+	CreateFilenames(ModelSize::medium, nres, max_resource_cost_best_controller);
 	CreateBestControllerMinCostEstimate(state, nres, nres);
 }
 
@@ -714,7 +739,7 @@ static void CreateLocalBestControllerMinRes2(benchmark::State& state) {
 
 static void CreateLocalBestControllerMinCost2(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::medium, nres);
+	CreateFilenames(ModelSize::medium, nres, max_resource_cost_local_best_controller);
 	CreateLocalBestControllerMinCost(state, nres, nres);
 }
 
@@ -738,13 +763,13 @@ static void CreateBestControllerMinTrans3(benchmark::State& state) {
 
 static void CreateBestControllerMinCost3(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::big, nres);
+	CreateFilenames(ModelSize::big, nres, max_resource_cost_best_controller);
 	CreateBestControllerMinCost(state, nres, nres);
 }
 
 static void CreateBestControllerMinCostEstimate3(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::big, nres);
+	CreateFilenames(ModelSize::big, nres, max_resource_cost_best_controller);
 	CreateBestControllerMinCostEstimate(state, nres, nres);
 }
 
@@ -756,7 +781,7 @@ static void CreateLocalBestControllerMinRes3(benchmark::State& state) {
 
 static void CreateLocalBestControllerMinCost3(benchmark::State& state) {
 	int nres = state.range(0);
-	CreateFilenames(ModelSize::big, nres);
+	CreateFilenames(ModelSize::big, nres, max_resource_cost_local_best_controller);
 	CreateLocalBestControllerMinCost(state, nres, nres);
 }
 
@@ -766,7 +791,7 @@ static void CreateLocalBestControllerMinCost3(benchmark::State& state) {
 //BENCHMARK(CreateBestControllerMinCost1)->DenseRange(2, nres_best_controller_min_cost1, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateBestControllerMinCostEstimate1)->DenseRange(2, nres_best_controller_min_cost_estimate1, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinRes1)->DenseRange(2, nres_local_best_controller_min_res1, 10)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateLocalBestControllerMinCost1)->DenseRange(2, nres_local_best_controller_min_cost1, 10)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateLocalBestControllerMinCost1)->DenseRange(2, nres_local_best_controller_min_cost1, 10)->Unit(benchmark::kMillisecond);
 
 //BENCHMARK(CreateController2)->DenseRange(2, nres_controller2, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateBestControllerMinRes2)->DenseRange(2, nres_best_controller_min_res2, 2)->Unit(benchmark::kMillisecond);
@@ -782,7 +807,7 @@ static void CreateLocalBestControllerMinCost3(benchmark::State& state) {
 //BENCHMARK(CreateBestControllerMinCost3)->DenseRange(2, nres_best_controller_min_cost3, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateBestControllerMinCostEstimate3)->DenseRange(2, nres_best_controller_min_cost_estimate3, 2)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinRes3)->DenseRange(2, nres_local_best_controller_min_res3, 10)->Unit(benchmark::kMillisecond);
-BENCHMARK(CreateLocalBestControllerMinCost3)->DenseRange(2, nres_local_best_controller_min_cost3, 10)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateLocalBestControllerMinCost3)->DenseRange(2, nres_local_best_controller_min_cost3, 10)->Unit(benchmark::kMillisecond);
 
 //BENCHMARK_MAIN();
 int main(int argc, char** argv)
