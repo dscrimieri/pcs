@@ -108,8 +108,10 @@ namespace pcs {
 		std::list<size_t> GetResourceList();
 	private:
 		void SetCosts(std::optional<std::filesystem::path> path);
-		void UpdateCost(Candidate& cand, MinimizeOpt opt, const TopologyTransition& transition);
-		void UpdateCost(Candidate& cand, MinimizeOpt opt);
+		bool SetInitialCandidate(Candidate& initial_candidate, MinimizeOpt opt, std::optional<std::filesystem::path> costs_path);
+		void UpdateCost(Candidate& cand, MinimizeOpt opt, size_t resource);
+		void UpdateCostAfterOperation(Candidate& cand, MinimizeOpt opt);
+		void UpdateCostAfterCompositeOperation(Candidate& cand, MinimizeOpt opt);
 		const CompositeOperation& GetComposite(const Stage& stage, const Recipe& recipe);
 		bool AdvanceStage(Candidate& cand, TransferMap& transfers, MinimizeOpt opt);	
 	};

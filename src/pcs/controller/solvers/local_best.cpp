@@ -43,21 +43,29 @@ namespace pcs {
 		}
 	}
 
-	void LocalBestController::UpdateCost(LocalCandidate& cand, const TopologyTransition& transition, MinimizeOpt opt) {
-		UpdateCost(cand.used_resources_, cand.list_used_resources_, cand.cost_, transition, opt);
-	}
-
-	void LocalBestController::UpdateCost(std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, const TopologyTransition& transition, MinimizeOpt opt) {
+	void LocalBestController::UpdateCost(LocalCandidate& cand, size_t resource, MinimizeOpt opt) {
 		switch (opt) {
 		case MinimizeOpt::Resources:
-			if (!used_resources.contains(transition.first)) {
-				used_resources.emplace(transition.first);
-				cost++;
+			if (!cand.used_resources_.contains(resource)) {
+				cand.used_resources_.emplace(resource);
+				cand.cost_++;
 			}			
 			break;
 		case MinimizeOpt::Cost:
-			list_used_resources.emplace_back(transition.first);
-			cost += costs_[transition.first];
+			cand.list_used_resources_.emplace_back(resource);
+			cand.cost_ += costs_[resource];
+			break;
+		default:
+			assert(false);
+		}
+	}
+
+	void LocalBestController::UpdateCostAfterOperation(size_t& cost, MinimizeOpt opt) {
+		switch (opt) {
+		case MinimizeOpt::Resources:
+			break;
+		case MinimizeOpt::Cost:
+			cost++;
 			break;
 		default:
 			assert(false);
@@ -82,11 +90,17 @@ namespace pcs {
 			if (costs_.empty()) {
 				return {};
 			}
+
+			cost_ = costs_[0];
+		}
+		else {
+			cost_ = 0;
 		}
 
-		used_resources_ = std::unordered_set<size_t>();
-		list_used_resources_ = std::list<size_t>();
-		cost_ = 0;
+		used_resources_.clear();
+		used_resources_.insert(0);
+		list_used_resources_.clear();
+		list_used_resources_.push_front(0);
 		std::set<LocalCandidate> visited_candidates;
 
 		// The first transition of the recipe does not have a guard associated with it
@@ -116,6 +130,12 @@ namespace pcs {
 			std::cout << "}" << std::endl;
 		}
 #endif
+
+		if (!generated) {
+			used_resources_.clear();
+			list_used_resources_.clear();
+			cost_ = 0;
+		}
 		
 		/* ******************************************************************************************* /
 		  * @Hack: Visualises controller no matter what (wherever it reached) for testing purposes.
@@ -156,7 +176,7 @@ namespace pcs {
 					plan_transitions.emplace_back(next_recipe_state, topology_state, label_vec, &transition.to());
 					plan_parts.Add(transition.label(), output);
 					topology_state = &transition.to();
-					UpdateCost(used_resources, list_used_resources, cost, transition.label(), opt_);
+					UpdateCostAfterOperation(cost, opt_);
 					found = true;
 					break;
 				}
@@ -230,7 +250,7 @@ namespace pcs {
 					continue;
 				}
 				
-				UpdateCost(cand, *std::get<2>(v), opt_);
+				UpdateCost(cand, std::get<2>(v)->first, opt_);
 				pq.push(cand);
 			}
 

@@ -58,32 +58,51 @@ namespace pcs {
 		}
 	}
 
-	void BestController::UpdateCost(Candidate& cand, MinimizeOpt opt, const TopologyTransition& transition) {
+	void BestController::UpdateCost(Candidate& cand, MinimizeOpt opt, size_t resource) {
 		switch (opt) {
 		case MinimizeOpt::Transitions:
 			cand.cost++;
 			break;
 		case MinimizeOpt::Resources:
-			if (!cand.used_resources.contains(transition.first)) {
-				cand.used_resources.emplace(transition.first);
+			if (!cand.used_resources.contains(resource)) {
+				cand.used_resources.emplace(resource);
 				cand.cost++;
 			}
 			break;
 		case MinimizeOpt::Cost:
-			cand.cost += costs_[transition.first];
-			cand.list_used_resources.emplace_back(transition.first);
+			cand.list_used_resources.emplace_back(resource);
+			cand.cost += costs_[resource];
 			break;
 		case MinimizeOpt::CostEstimate:
-			cand.path_cost += costs_[transition.first];
+			cand.list_used_resources.emplace_back(resource);
+			cand.path_cost += costs_[resource];
 			cand.cost = cand.path_cost + composite_ops_ - cand.complete_composite_ops;
-			cand.list_used_resources.emplace_back(transition.first);
 			break;
 		default:
 			assert(false);
 		}
 	}
 
-	void BestController::UpdateCost(Candidate& cand, MinimizeOpt opt) {
+	void BestController::UpdateCostAfterOperation(Candidate& cand, MinimizeOpt opt) {
+		switch (opt) {
+		case MinimizeOpt::Transitions:
+			cand.cost++;
+			break;
+		case MinimizeOpt::Resources:
+			break;
+		case MinimizeOpt::Cost:
+			cand.cost++;
+			break;
+		case MinimizeOpt::CostEstimate:
+			cand.path_cost++;
+			cand.cost = cand.path_cost + composite_ops_ - cand.complete_composite_ops;			
+			break;
+		default:
+			assert(false);
+		}
+	}
+
+	void BestController::UpdateCostAfterCompositeOperation(Candidate& cand, MinimizeOpt opt) {
 		if (opt == MinimizeOpt::CostEstimate) {
 			cand.cost = cand.path_cost + composite_ops_ - cand.complete_composite_ops;
 		}
@@ -117,7 +136,7 @@ namespace pcs {
 					stage.topology_state = &transition.to();
 
 					cand.complete_ops++;
-					UpdateCost(cand, opt, transition.label());
+					UpdateCostAfterOperation(cand, opt);
 
 					found = true;
 					break;
@@ -141,24 +160,46 @@ namespace pcs {
 		return found;
 	}
 
-	std::optional<ControllerType> BestController::Generate(MinimizeOpt opt, std::optional<std::filesystem::path> costs_path) {
-		Candidate best_candidate;
-		std::priority_queue<Candidate, std::vector<Candidate>, CandidateComparator> pq;
-
+	bool BestController::SetInitialCandidate(Candidate& initial_candidate, MinimizeOpt opt, std::optional<std::filesystem::path> costs_path) {
 		Parts initial_parts(num_of_resources_);
 		const std::string& recipe_init_state = recipe_->lts().initial_state();
 		const auto& first_transition = recipe_->lts().at(recipe_init_state).transitions()[0];
 		Stage initial_descendant(topology_->initial_state(), initial_parts, recipe_init_state, first_transition.to(), 0);
-		Candidate initial_candidate(initial_descendant);
+		initial_candidate.descendants.push(initial_descendant);
 		initial_candidate.controller.set_initial_state({ first_transition.to(), topology_->initial_state() });
-		pq.push(initial_candidate);
+		initial_candidate.used_resources.insert(0);
+		initial_candidate.list_used_resources.push_front(0);
 
 		if (opt == MinimizeOpt::Cost || opt == MinimizeOpt::CostEstimate) {
 			SetCosts(costs_path);
 			if (costs_.empty()) {
-				return {};
+				return false;
+			}
+
+			if (opt == MinimizeOpt::Cost)
+			{
+				initial_candidate.cost = costs_[0];
+			}
+			else if (opt == MinimizeOpt::CostEstimate)
+			{
+				initial_candidate.path_cost = costs_[0];
+				initial_candidate.cost = initial_candidate.path_cost + composite_ops_ - initial_candidate.complete_composite_ops;
 			}
 		}
+
+		return true;
+	}
+
+	std::optional<ControllerType> BestController::Generate(MinimizeOpt opt, std::optional<std::filesystem::path> costs_path) {
+		Candidate best_candidate;
+		std::priority_queue<Candidate, std::vector<Candidate>, CandidateComparator> pq;
+		
+		Candidate initial_candidate;
+		if (!SetInitialCandidate(initial_candidate, opt, costs_path))
+		{
+			return {};
+		}
+		pq.push(initial_candidate);
 
 		while (!pq.empty()) {
 			Candidate cand = pq.top();
@@ -198,7 +239,7 @@ namespace pcs {
 					next_stage.topology_state = &state_vec;
 					ApplyTransition(plan_t, next_candidate.controller);
 
-					UpdateCost(next_candidate, opt, *std::get<2>(v));
+					UpdateCost(next_candidate, opt, std::get<2>(v)->first);
 
 					pq.push(next_candidate);
 				}
@@ -210,7 +251,7 @@ namespace pcs {
 			if (stage.seq_id >= (co.HasGuard() ? (co.sequential.size() + 1) : co.sequential.size())) [[Likely]] {
 				// Composite operation complete, process recipe transitions
 				cand.complete_composite_ops++;
-				UpdateCost(cand, opt);
+				UpdateCostAfterCompositeOperation(cand, opt);
 				for (const auto& rec_transition : recipe_->lts()[*stage.to_recipe_state].transitions_) {
 					Stage next_stage(*stage.topology_state, stage.parts, *stage.to_recipe_state, rec_transition.to(), 0);
 					cand.descendants.push(next_stage);

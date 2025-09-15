@@ -108,7 +108,7 @@ namespace pcs {
 			Parts plan_parts, std::vector<PlanTransition> basic_plan, std::vector<PlanTransition> plan_transitions, const CompositeOperation& co, size_t seq_id,
 			std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, std::set<LocalCandidate> visited_candidates, size_t recursion_level);
 		void SetCosts(std::optional<std::filesystem::path> path);
-		void UpdateCost(LocalCandidate& cand, const TopologyTransition& transition, MinimizeOpt opt);
-		void UpdateCost(std::unordered_set<size_t>& used_resources, std::list<size_t>& list_used_resources, size_t& cost, const TopologyTransition& transition, MinimizeOpt opt);
+		void UpdateCost(LocalCandidate& cand, size_t resource, MinimizeOpt opt);		
+		void UpdateCostAfterOperation(size_t& cost, MinimizeOpt opt);
 	};
 }
