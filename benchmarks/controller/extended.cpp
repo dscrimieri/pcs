@@ -1,6 +1,7 @@
-// Generates a recipe, a number of resources and runs various benchmarks
+// Generates a recipe with a given number of operations and a number of resources proportional to the number of operations.
+// Runs benchmarks for controller synthesis with complete and incremental topology
+// The generated recipe can be realised by one controller
 // Size of recipe and resources can be small, medium or big
-// Benchmarks include controller synthesis with complete or incremental topology
 
 #include <benchmark/benchmark.h>
 #include "pcs/controller/controller.h"

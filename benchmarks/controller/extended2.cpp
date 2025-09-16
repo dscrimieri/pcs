@@ -1,7 +1,7 @@
-// Generates a recipe, a number of resources and runs various benchmarks
-// Like extended.cpp, but with two solutions (with different cost)
+// Generates a recipe with a given number of operations and a number of resources proportional to the number of operations.
+// Runs various benchmarks for controller synthesis, including DFS, global and local best controller synthesis
+// The generated recipe can be realised by three controllers (with different cost)
 // Size of recipe and resources can be small, medium or big
-// Benchmarks include global and local best controller synthesis
 
 #include <benchmark/benchmark.h>
 #include "pcs/controller/controller.h"
