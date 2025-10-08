@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o100_1. s1.
+s0. in:301. s1.
+s1. out:301. s0.
+s1. rem. s0.
+s1. o100_2. s2.
+s1. o100. s2.
+s2. out:301. s0.
+s2. rem. s0.
+s2. o100_3. s3.
+s2. o100a. s3.
+s3. out:301. s0.
+s3. rem. s0.

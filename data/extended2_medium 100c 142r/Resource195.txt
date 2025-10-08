@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o54_1. s1.
+s0. in:195. s1.
+s1. out:195. s0.
+s1. rem. s0.
+s1. o54_2. s2.
+s1. o54. s2.
+s2. out:195. s0.
+s2. rem. s0.
+s2. o54_3. s3.
+s2. o54a. s3.
+s3. out:195. s0.
+s3. rem. s0.

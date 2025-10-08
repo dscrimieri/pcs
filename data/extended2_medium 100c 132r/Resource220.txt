@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o89_1. s1.
+s0. in:220. s1.
+s1. out:220. s0.
+s1. rem. s0.
+s1. o89_2. s2.
+s1. o89. s2.
+s2. out:220. s0.
+s2. rem. s0.
+s2. o89_3. s3.
+s2. o89a. s3.
+s3. out:220. s0.
+s3. rem. s0.

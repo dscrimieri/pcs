@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o96_1. s1.
+s0. in:247. s1.
+s1. out:247. s0.
+s1. rem. s0.
+s1. o96_2. s2.
+s1. o96. s2.
+s2. out:247. s0.
+s2. rem. s0.
+s2. o96_3. s3.
+s2. o96a. s3.
+s3. out:247. s0.
+s3. rem. s0.

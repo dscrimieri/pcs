@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o136_1. s1.
+s0. in:437. s1.
+s1. out:437. s0.
+s1. rem. s0.
+s1. o136_2. s2.
+s1. o136. s2.
+s2. out:437. s0.
+s2. rem. s0.
+s2. o136_3. s3.
+s2. o136a. s3.
+s3. out:437. s0.
+s3. rem. s0.

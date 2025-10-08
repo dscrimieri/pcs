@@ -1,0 +1,19 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o20_1. s1.
+s0. in:281. s1.
+s1. out:281. s0.
+s1. rem. s0.
+s1. o20_2. s2.
+s1. o20. s2.
+s2. out:281. s0.
+s2. rem. s0.
+s2. o20_3. s3.
+s2. o20a. s3.
+s3. out:281. s0.
+s3. rem. s0.
+s3. o20_4. s4.
+s3. o20b. s4.
+s4. out:281. s0.
+s4. rem. s0.

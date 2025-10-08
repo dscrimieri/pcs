@@ -1,0 +1,69 @@
+{
+  "initialState": "A1",
+  "transitions": [
+    {
+      "startState": "A1",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o1",
+            "input": [],
+            "parameters": [],
+            "output": ["p1'"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A1'"
+    },
+    {
+      "startState": "A1'",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o1a",
+            "input": ["p1'"],
+            "parameters": [],
+            "output": ["p1"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A2"
+    },
+    {
+      "startState": "A2",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o2",
+            "input": ["p1"],
+            "parameters": [],
+            "output": ["p2'"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A2'"
+    },
+    {
+      "startState": "A2'",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o2a",
+            "input": ["p2'"],
+            "parameters": [],
+            "output": ["p2"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A3"
+    }
+  ]
+}

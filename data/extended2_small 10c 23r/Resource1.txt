@@ -1,0 +1,7 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o1_1. s1.
+s0. o1. s1.
+s1. out:1. s0.
+s1. rem. s0.

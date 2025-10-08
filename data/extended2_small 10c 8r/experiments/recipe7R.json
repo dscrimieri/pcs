@@ -1,0 +1,117 @@
+{
+  "initialState": "A1",
+  "transitions": [
+    {
+      "startState": "A1",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o1",
+            "input": [],
+            "parameters": [],
+            "output": ["p1"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A2"
+    },
+    {
+      "startState": "A2",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o2",
+            "input": ["p1"],
+            "parameters": [],
+            "output": ["p2"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A3"
+    },
+    {
+      "startState": "A3",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o3",
+            "input": ["p2"],
+            "parameters": [],
+            "output": ["p3"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A4"
+    },
+    {
+      "startState": "A4",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o4",
+            "input": ["p3"],
+            "parameters": [],
+            "output": ["p4"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A5"
+    },
+    {
+      "startState": "A5",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o5",
+            "input": ["p4"],
+            "parameters": [],
+            "output": ["p5"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A6"
+    },
+    {
+      "startState": "A6",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o6",
+            "input": ["p5"],
+            "parameters": [],
+            "output": ["p6"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A7"
+    },
+    {
+      "startState": "A7",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o7",
+            "input": ["p6"],
+            "parameters": [],
+            "output": ["p7"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A8"
+    }
+  ]
+}

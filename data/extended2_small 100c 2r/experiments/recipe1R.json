@@ -1,0 +1,21 @@
+{
+  "initialState": "A1",
+  "transitions": [
+    {
+      "startState": "A1",
+      "label": {
+        "guard": {},
+        "sequential": [
+          {
+            "name": "o1",
+            "input": [],
+            "parameters": [],
+            "output": ["p1"]
+          }
+        ],
+        "parallel": []
+      },
+      "endState": "A2"
+    }
+  ]
+}

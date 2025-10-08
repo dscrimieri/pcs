@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o158_1. s1.
+s0. in:499. s1.
+s1. out:499. s0.
+s1. rem. s0.
+s1. o158_2. s2.
+s1. o158. s2.
+s2. out:499. s0.
+s2. rem. s0.
+s2. o158_3. s3.
+s2. o158a. s3.
+s3. out:499. s0.
+s3. rem. s0.

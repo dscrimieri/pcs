@@ -1,0 +1,15 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o60_1. s1.
+s0. in:201. s1.
+s1. out:201. s0.
+s1. rem. s0.
+s1. o60_2. s2.
+s1. o60. s2.
+s2. out:201. s0.
+s2. rem. s0.
+s2. o60_3. s3.
+s2. o60a. s3.
+s3. out:201. s0.
+s3. rem. s0.

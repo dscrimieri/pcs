@@ -1,0 +1,19 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o125_1. s1.
+s0. in:256. s1.
+s1. out:256. s0.
+s1. rem. s0.
+s1. o125_2. s2.
+s1. o125. s2.
+s2. out:256. s0.
+s2. rem. s0.
+s2. o125_3. s3.
+s2. o125a. s3.
+s3. out:256. s0.
+s3. rem. s0.
+s3. o125_4. s4.
+s3. o125b. s4.
+s4. out:256. s0.
+s4. rem. s0.

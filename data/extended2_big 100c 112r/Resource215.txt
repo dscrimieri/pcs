@@ -1,0 +1,19 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o104_1. s1.
+s0. in:215. s1.
+s1. out:215. s0.
+s1. rem. s0.
+s1. o104_2. s2.
+s1. o104. s2.
+s2. out:215. s0.
+s2. rem. s0.
+s2. o104_3. s3.
+s2. o104a. s3.
+s3. out:215. s0.
+s3. rem. s0.
+s3. o104_4. s4.
+s3. o104b. s4.
+s4. out:215. s0.
+s4. rem. s0.

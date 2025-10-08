@@ -1,0 +1,11 @@
+s0
+s0. nop. s0.
+s1. nop. s1.
+s0. o161_1. s1.
+s0. in:322. s1.
+s1. out:322. s0.
+s1. rem. s0.
+s1. o161_2. s2.
+s1. o161. s2.
+s2. out:322. s0.
+s2. rem. s0.
