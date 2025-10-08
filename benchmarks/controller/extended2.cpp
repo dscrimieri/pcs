@@ -34,25 +34,25 @@ static const int nres_controller1 = 0;
 static const int nres_best_controller_min_res1 = 0;
 static const int nres_best_controller_min_trans1 = 0;
 static const int nres_best_controller_min_cost1 = 22;
-static const int nres_best_controller_min_cost_estimate1 = 22;
+static const int nres_best_controller_min_cost_estimate1 = 23;
 static const int nres_local_best_controller_min_res1 = 0;
-static const int nres_local_best_controller_min_cost1 = 212;
+static const int nres_local_best_controller_min_cost1 = 172;
 
 static const int nres_controller2 = 0;
 static const int nres_best_controller_min_res2 = 0;
 static const int nres_best_controller_min_trans2 = 0;
-static const int nres_best_controller_min_cost2 = 20;
-static const int nres_best_controller_min_cost_estimate2 = 22;
+static const int nres_best_controller_min_cost2 = 21;
+static const int nres_best_controller_min_cost_estimate2 = 23;
 static const int nres_local_best_controller_min_res2 = 0;
-static const int nres_local_best_controller_min_cost2 = 62;
+static const int nres_local_best_controller_min_cost2 = 172;
 
 static const int nres_controller3 = 0;
 static const int nres_best_controller_min_res3 = 0;
 static const int nres_best_controller_min_trans3 = 0;
-static const int nres_best_controller_min_cost3 = 14;
-static const int nres_best_controller_min_cost_estimate3 = 14;
+static const int nres_best_controller_min_cost3 = 19;
+static const int nres_best_controller_min_cost_estimate3 = 23;
 static const int nres_local_best_controller_min_res3 = 0;
-static const int nres_local_best_controller_min_cost3 = 62;
+static const int nres_local_best_controller_min_cost3 = 142;
 
 enum ModelSize {
 	small,
@@ -785,29 +785,29 @@ static void CreateLocalBestControllerMinCost3(benchmark::State& state) {
 	CreateLocalBestControllerMinCost(state, nres, nres);
 }
 
-//BENCHMARK(CreateController1)->DenseRange(2, nres_controller1, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinRes1)->DenseRange(2, nres_best_controller_min_res1, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinTrans1)->DenseRange(2, nres_best_controller_min_trans1, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinCost1)->DenseRange(2, nres_best_controller_min_cost1, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinCostEstimate1)->DenseRange(2, nres_best_controller_min_cost_estimate1, 2)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateController1)->DenseRange(2, nres_controller1, 1)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateBestControllerMinRes1)->DenseRange(2, nres_best_controller_min_res1, 1)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateBestControllerMinTrans1)->DenseRange(2, nres_best_controller_min_trans1, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateBestControllerMinCost1)->DenseRange(2, nres_best_controller_min_cost1, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateBestControllerMinCostEstimate1)->DenseRange(2, nres_best_controller_min_cost_estimate1, 1)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinRes1)->DenseRange(2, nres_local_best_controller_min_res1, 10)->Unit(benchmark::kMillisecond);
 BENCHMARK(CreateLocalBestControllerMinCost1)->DenseRange(2, nres_local_best_controller_min_cost1, 10)->Unit(benchmark::kMillisecond);
 
-//BENCHMARK(CreateController2)->DenseRange(2, nres_controller2, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinRes2)->DenseRange(2, nres_best_controller_min_res2, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinTrans2)->DenseRange(2, nres_best_controller_min_trans2, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinCost2)->DenseRange(2, nres_best_controller_min_cost2, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinCostEstimate2)->DenseRange(2, nres_best_controller_min_cost_estimate2, 2)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateController2)->DenseRange(2, nres_controller2, 1)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateBestControllerMinRes2)->DenseRange(2, nres_best_controller_min_res2, 1)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateBestControllerMinTrans2)->DenseRange(2, nres_best_controller_min_trans2, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateBestControllerMinCost2)->DenseRange(2, nres_best_controller_min_cost2, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateBestControllerMinCostEstimate2)->DenseRange(2, nres_best_controller_min_cost_estimate2, 1)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinRes2)->DenseRange(2, nres_local_best_controller_min_res2, 10)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateLocalBestControllerMinCost2)->DenseRange(2, nres_local_best_controller_min_cost2, 10)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateLocalBestControllerMinCost2)->DenseRange(2, nres_local_best_controller_min_cost2, 10)->Unit(benchmark::kMillisecond);
 
-//BENCHMARK(CreateController3)->DenseRange(2, nres_controller3, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinRes3)->DenseRange(2, nres_best_controller_min_res3, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinTrans3)->DenseRange(2, nres_best_controller_min_trans3, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinCost3)->DenseRange(2, nres_best_controller_min_cost3, 2)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateBestControllerMinCostEstimate3)->DenseRange(2, nres_best_controller_min_cost_estimate3, 2)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateController3)->DenseRange(2, nres_controller3, 1)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateBestControllerMinRes3)->DenseRange(2, nres_best_controller_min_res3, 1)->Unit(benchmark::kMillisecond);
+//BENCHMARK(CreateBestControllerMinTrans3)->DenseRange(2, nres_best_controller_min_trans3, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateBestControllerMinCost3)->DenseRange(2, nres_best_controller_min_cost3, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateBestControllerMinCostEstimate3)->DenseRange(2, nres_best_controller_min_cost_estimate3, 1)->Unit(benchmark::kMillisecond);
 //BENCHMARK(CreateLocalBestControllerMinRes3)->DenseRange(2, nres_local_best_controller_min_res3, 10)->Unit(benchmark::kMillisecond);
-//BENCHMARK(CreateLocalBestControllerMinCost3)->DenseRange(2, nres_local_best_controller_min_cost3, 10)->Unit(benchmark::kMillisecond);
+BENCHMARK(CreateLocalBestControllerMinCost3)->DenseRange(2, nres_local_best_controller_min_cost3, 10)->Unit(benchmark::kMillisecond);
 
 //BENCHMARK_MAIN();
 int main(int argc, char** argv)
